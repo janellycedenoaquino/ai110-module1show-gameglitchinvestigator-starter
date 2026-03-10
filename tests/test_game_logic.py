@@ -60,9 +60,9 @@ def test_parse_guess_negative():
     assert err == "Enter a number between 1 and 50."
 
 def test_score_win_first_attempt():
-    # Winning on attempt 1 should give 90 points (100 - 10 * 1)
+    # Winning on attempt 1 should give 100 points (100 - 10 * (1-1))
     score = update_score(0, "Win", attempt_number=1)
-    assert score == 90
+    assert score == 100
 
 def test_score_too_low_subtracts_5():
     # Any "Too Low" guess should subtract 5
