@@ -1,5 +1,4 @@
-from logic_utils import check_guess, get_range_for_difficulty, parse_guess
-from app import update_score
+from logic_utils import check_guess, get_range_for_difficulty, parse_guess, update_score
 
 def test_easy_range():
     low, high = get_range_for_difficulty("Easy")
