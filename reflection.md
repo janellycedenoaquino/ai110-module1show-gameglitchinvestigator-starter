@@ -21,14 +21,18 @@ The first time i ran my code it looked fine but had many errors.
   - easy should be from 1-20
   - normal should be 1-50
   - hard should be from 1-100
+  - should normal be 8 attempts? easy be 6 and hard be 5?
   - title says "Guess a number between 1 and 100. attemots left: " for all of them.
 ---
 
 ## 2. How did you use AI as a teammate?
 
-- Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?
-- Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
-- Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
+- Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)? ClaudeAI
+- Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result). 
+AI suggested to change the tests I had for the "test_winning_guess()" function. the variable we had with the result was a tuple. instead of storing it as a tuple AI suggested we store it in two different variables and use the assert with the value we needed. before i accepted double checked by checking what the function returned and it does return a tuple. so i accepted the changes and my tests pass.
+
+- Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result). 
+When i gave ai the command to move the check_guess to logic_utils.py it didn't find the method inside of app.py so it skipped that step entirely and gave me only suggestions to code the logic inside of logic_utils.py skipping my request entirely.
 
 ---
 
@@ -37,7 +41,11 @@ The first time i ran my code it looked fine but had many errors.
 - How did you decide whether a bug was really fixed?
 - Describe at least one test you ran (manual or using pytest)  
   and what it showed you about your code.
+
+  I ran the app and tested it manually. i also read the tests and made sure that they were passing and correct. ex: for the issue where the suggestion was to go higher when it should be lower. I wrote smaller numbers and ensure the suggestion was to go higher not lower and wrote larger numbers than the target and checked it said go lower. 
+
 - Did AI help you design or understand any tests? How?
+yes AI helped me write the test for the function "test_check_guess_requires_int_secret()" it also made sure we didn't need to cast the value to an int to be able to compare it. it fixed that error. 
 
 ---
 
