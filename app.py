@@ -1,6 +1,6 @@
 import random
 import streamlit as st
-from logic_utils import check_guess, get_range_for_difficulty, parse_guess, update_score, load_leaderboard, save_to_leaderboard  # FIX: Refactored logic into logic_utils.py using ClaudeAI
+from logic_utils import check_guess, get_proximity_hint, get_range_for_difficulty, parse_guess, update_score, load_leaderboard, save_to_leaderboard  # FIX: Refactored logic into logic_utils.py using ClaudeAI
 
 st.set_page_config(page_title="Glitchy Guesser", page_icon="🎮")
 
@@ -48,6 +48,7 @@ if st.session_state.difficulty != difficulty:
     st.session_state.score = 0
     st.session_state.status = "playing"
     st.session_state.history = []
+    st.session_state.guess_log = []
     st.session_state.leaderboard_saved = False
 
 if "secret" not in st.session_state:
@@ -67,6 +68,9 @@ if "history" not in st.session_state:
 
 if "leaderboard_saved" not in st.session_state:
     st.session_state.leaderboard_saved = False
+
+if "guess_log" not in st.session_state:
+    st.session_state.guess_log = []
 
 st.subheader("Make a guess")
 
@@ -93,6 +97,7 @@ if new_game:
     st.session_state.score = 0
     st.session_state.status = "playing"
     st.session_state.history = []
+    st.session_state.guess_log = []
     st.session_state.leaderboard_saved = False
     st.success("New game started.")
     st.rerun()
@@ -137,9 +142,21 @@ if submit:
         st.session_state.history.append(guess_int)
 
         outcome, message = check_guess(guess_int, st.session_state.secret)
+        proximity = get_proximity_hint(guess_int, st.session_state.secret)
 
         if show_hint:
-            st.warning(message)
+            if outcome == "Too High":
+                st.error(message)
+            elif outcome == "Too Low":
+                st.warning(message)
+            st.caption(proximity)
+
+        st.session_state.guess_log.append({
+            "#": st.session_state.attempts,
+            "Guess": guess_int,
+            "Result": outcome,
+            "Proximity": proximity,
+        })
 
         st.session_state.score = update_score(
             current_score=st.session_state.score,
@@ -164,6 +181,10 @@ info_placeholder.info(
     f"Guess a number between {low} and {high}. "
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
 )
+
+if st.session_state.guess_log:
+    st.subheader("📋 Guess History")
+    st.table(st.session_state.guess_log)
 
 with debug_placeholder.expander("Developer Debug Info"):
     st.write("Secret:", st.session_state.secret)

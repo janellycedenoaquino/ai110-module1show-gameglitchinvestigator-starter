@@ -91,6 +91,22 @@ def parse_guess(raw: str, difficulty: str):
     return True, value, None
 
 
+def get_proximity_hint(guess: int, secret: int) -> str:
+    """Return a hot/cold emoji hint based on how close the guess is to the secret.
+
+    Returns:
+        🔥🔥🔥 Super hot (≤3), 🔥 Warm (≤10), 🌡️ Lukewarm (≤20), 🥶 Cold (>20).
+    """
+    distance = abs(guess - secret)
+    if distance <= 3:
+        return "🔥🔥🔥 Super hot!"
+    if distance <= 10:
+        return "🔥 Warm!"
+    if distance <= 20:
+        return "🌡️ Lukewarm..."
+    return "🥶 Cold"
+
+
 def check_guess(guess, secret):
     """
     Compare a guess to the secret number.
