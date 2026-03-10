@@ -9,7 +9,7 @@ def get_range_for_difficulty(difficulty: str):
     return 1, 100
 
 
-def parse_guess(raw: str):
+def parse_guess(raw: str, difficulty: str):
     """
     Parse user input into an int guess.
 
@@ -29,7 +29,10 @@ def parse_guess(raw: str):
     except Exception:
         return False, None, "That is not a number."
 
-    # FIXME: No range validation; negative numbers and out-of-bounds guesses are accepted
+    low, high = get_range_for_difficulty(difficulty)
+    if value < low or value > high:
+        return False, None, f"Enter a number between {low} and {high}."
+
     return True, value, None
 
 

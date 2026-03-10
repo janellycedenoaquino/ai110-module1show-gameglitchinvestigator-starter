@@ -16,7 +16,7 @@ The first time i ran my code it looked fine but had many errors.
       - [ ] after the first guess, attempts left, attempts, score, and history all stay the same — nothing updates until the second guess (debug expander and info message render before submit logic runs, so all values are one rerun behind)
       - [x] invalid inputs like letters are added to history as past guesses
       - [ ] attempts are accurate inside of the developer debug info but not on the title where it says "Guess a number between 1 and 100. Attempts left: 5" attempts left is always 5.
-  - [ ] allows negative numbers to be added as a guess (should only be between the range)
+  - [x] allows negative numbers to be added as a guess (should only be between the range)
   - [x] changing difficulty mid-game does not reset the secret — if the secret was 70 and you switch to Easy (1–20), the game still runs with 70 which is outside the new range
   - [ ] win score formula uses `attempt_number + 1` but attempt_number is already 1-indexed, so winning on the first try gives 80 points instead of 90 (off-by-one in update_score)
   - [x] new game button does not work
