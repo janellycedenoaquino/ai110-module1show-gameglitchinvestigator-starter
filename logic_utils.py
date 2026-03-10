@@ -5,7 +5,12 @@ LEADERBOARD_FILE = os.path.join(os.path.dirname(__file__), "leaderboard.json")
 
 
 def load_leaderboard():
-    """Load leaderboard from disk. Returns a list of entry dicts."""
+    """Load the leaderboard from disk.
+
+    Returns:
+        List of entry dicts with keys: name, difficulty, attempts, score.
+        Returns an empty list if the file does not exist or cannot be parsed.
+    """
     if not os.path.exists(LEADERBOARD_FILE):
         return []
     try:
@@ -17,10 +22,13 @@ def load_leaderboard():
 
 def save_to_leaderboard(name: str, difficulty: str, attempts: int, score: int):
     """
-    Save score for a player. Each name is unique on the leaderboard.
-    Only updates if the new score is higher than the existing one.
-    Keeps only the top 5 by score.
-    Returns True if the score was saved/updated, False if it was not (existing score was higher).
+    Save or update a player's score on the leaderboard.
+
+    Names are matched case-insensitively. An existing entry is only replaced
+    if the new score is strictly higher. The leaderboard is capped at 5 entries.
+
+    Returns:
+        True if the entry was saved or updated, False if the existing score was equal or higher.
     """
     entries = load_leaderboard()
     existing = next((e for e in entries if e["name"].lower() == name.lower()), None)
@@ -37,7 +45,11 @@ def save_to_leaderboard(name: str, difficulty: str, attempts: int, score: int):
 
 
 def get_range_for_difficulty(difficulty: str):
-    """Return (low, high) inclusive range for a given difficulty."""
+    """Return the inclusive (low, high) guessing range for the given difficulty.
+
+    Returns:
+        (1, 20) for Easy, (1, 50) for Normal, (1, 100) for Hard or unknown.
+    """
     if difficulty == "Easy":
         return 1, 20
     if difficulty == "Normal":
@@ -49,9 +61,14 @@ def get_range_for_difficulty(difficulty: str):
 
 def parse_guess(raw: str, difficulty: str):
     """
-    Parse user input into an int guess.
+    Validate and parse raw text input into an integer guess.
 
-    Returns: (ok: bool, guess_int: int | None, error_message: str | None)
+    Args:
+        raw: Raw string from the player. May be None or empty.
+        difficulty: Current difficulty, used to check the valid range.
+
+    Returns:
+        (True, int, None) on success, or (False, None, error_str) on failure.
     """
     if raw is None:
         return False, None, "Enter a guess."
@@ -76,9 +93,10 @@ def parse_guess(raw: str, difficulty: str):
 
 def check_guess(guess, secret):
     """
-    Compare guess to secret and return (outcome, message).
+    Compare a guess to the secret number.
 
-    outcome examples: "Win", "Too High", "Too Low"
+    Returns:
+        A (outcome, message) tuple where outcome is "Win", "Too High", or "Too Low".
     """
     if guess == secret:
         return "Win", "🎉 Correct!"
@@ -90,7 +108,15 @@ def check_guess(guess, secret):
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
-    """Update score based on outcome and attempt number."""
+    """
+    Apply score changes for a guess outcome.
+
+    Win awards 100 - 10*(attempt_number-1) points (min 10).
+    Too High or Too Low each deduct 5 points.
+
+    Returns:
+        Updated score as an int.
+    """
     if outcome == "Win":
         points = 100 - 10 * (attempt_number - 1)
         if points < 10:
