@@ -1,5 +1,5 @@
 from logic_utils import check_guess
-from app import get_range_for_difficulty
+from app import get_range_for_difficulty, parse_guess
 
 def test_easy_range():
     low, high = get_range_for_difficulty("Easy")
@@ -15,6 +15,36 @@ def test_hard_range():
     low, high = get_range_for_difficulty("Hard")
     assert low == 1
     assert high == 100
+
+def test_parse_guess_valid_number():
+    ok, value, err = parse_guess("42")
+    assert ok == True
+    assert value == 42
+    assert err is None
+
+def test_parse_guess_empty_string():
+    ok, value, err = parse_guess("")
+    assert ok == False
+    assert value is None
+    assert err == "Enter a guess."
+
+def test_parse_guess_none():
+    ok, value, err = parse_guess(None)
+    assert ok == False
+    assert value is None
+    assert err == "Enter a guess."
+
+def test_parse_guess_non_number():
+    ok, value, err = parse_guess("abc")
+    assert ok == False
+    assert value is None
+    assert err == "That is not a number."
+
+def test_parse_guess_decimal_truncates():
+    # "3.9" should be accepted and truncated to 3
+    ok, value, _ = parse_guess("3.9")
+    assert ok == True
+    assert value == 3
 
 def test_winning_guess():
     # If the secret is 50 and guess is 50, it should be a win

@@ -16,13 +16,13 @@ The first time i ran my code it looked fine but had many errors.
       - [ ] the History doesn't show the first attempt
       - [ ] attempts are accurate inside of the developer debug info but not on the title where it says "Guess a number between 1 and 100. Attempts left: 5" attempts left is always 5.
   - [ ] allows negative numbers to be added as a guess (should only be between the range)
-  - [ ] new game button does not work
+  - [x] new game button does not work
   - [x] attempts start at 1 not 0
   - [x] easy should be from 1-20
   - [x] normal should be 1-50
   - [x] hard should be from 1-100
   - [x] should normal be 8 attempts? easy be 6 and hard be 5?
-  - [ ] title says "Guess a number between 1 and 100. attemots left: " for all of them.
+  - [x] title says "Guess a number between 1 and 100. attemots left: " for all of them.
 ---
 
 ## 2. How did you use AI as a teammate?

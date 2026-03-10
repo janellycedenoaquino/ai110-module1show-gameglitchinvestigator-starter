@@ -92,10 +92,8 @@ if "history" not in st.session_state:
 
 st.subheader("Make a guess")
 
-# FIXME: Hardcodes "1 and 100" instead of showing the actual difficulty range
-# FIXME: Attempts left is wrong because attempts starts at 1 instead of 0
 st.info(
-    f"Guess a number between 1 and 100. "
+    f"Guess a number between {low} and {high}. "
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
 )
 
@@ -121,8 +119,10 @@ with col3:
 
 if new_game:
     st.session_state.attempts = 0
-    # FIXME: New game always uses range 1-100, ignoring the selected difficulty
-    st.session_state.secret = random.randint(1, 100)
+    st.session_state.secret = random.randint(low, high)
+    st.session_state.score = 0
+    st.session_state.status = "playing"
+    st.session_state.history = []
     st.success("New game started.")
     st.rerun()
 
