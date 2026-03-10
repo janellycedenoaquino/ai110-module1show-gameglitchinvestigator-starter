@@ -40,9 +40,6 @@ def update_score(current_score: int, outcome: str, attempt_number: int):
         return current_score + points
 
     if outcome == "Too High":
-        # FIXME: Even-numbered attempts incorrectly add 5 points instead of subtracting; score becomes inconsistent
-        if attempt_number % 2 == 0:
-            return current_score + 5
         return current_score - 5
 
     if outcome == "Too Low":
@@ -97,6 +94,7 @@ st.info(
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
 )
 
+# FIXME: Debug expander renders before submit logic; attempts, score, and history are all one rerun behind
 with st.expander("Developer Debug Info"):
     st.write("Secret:", st.session_state.secret)
     st.write("Attempts:", st.session_state.attempts)
@@ -139,6 +137,7 @@ if submit:
     ok, guess_int, err = parse_guess(raw_guess)
 
     if not ok:
+        # FIXME: Invalid inputs (letters, symbols) are incorrectly added to history
         st.session_state.history.append(raw_guess)
         st.error(err)
     else:

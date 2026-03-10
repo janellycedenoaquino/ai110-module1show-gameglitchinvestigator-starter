@@ -1,5 +1,5 @@
 from logic_utils import check_guess
-from app import get_range_for_difficulty, parse_guess
+from app import get_range_for_difficulty, parse_guess, update_score
 
 def test_easy_range():
     low, high = get_range_for_difficulty("Easy")
@@ -45,6 +45,27 @@ def test_parse_guess_decimal_truncates():
     ok, value, _ = parse_guess("3.9")
     assert ok == True
     assert value == 3
+
+def test_score_too_low_subtracts_5():
+    # Any "Too Low" guess should subtract 5
+    score = update_score(0, "Too Low", attempt_number=1)
+    assert score == -5
+
+def test_score_too_high_subtracts_5():
+    # Any "Too High" guess should subtract 5, regardless of attempt number
+    score = update_score(0, "Too High", attempt_number=1)
+    assert score == -5
+
+def test_score_too_high_even_attempt_subtracts_5():
+    # Regression: even-numbered attempts were incorrectly adding 5 instead of subtracting
+    score = update_score(0, "Too High", attempt_number=2)
+    assert score == -5
+
+def test_score_two_wrong_guesses_is_minus_10():
+    # Two failed attempts should result in -10 total
+    score = update_score(0, "Too Low", attempt_number=1)
+    score = update_score(score, "Too High", attempt_number=2)
+    assert score == -10
 
 def test_winning_guess():
     # If the secret is 50 and guess is 50, it should be a win

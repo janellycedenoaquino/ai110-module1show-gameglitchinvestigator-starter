@@ -12,8 +12,9 @@ The first time i ran my code it looked fine but had many errors.
 - [x] When i guess a number while checking the developer debug info it said go lower for a number that was not lower than the secret.
   - [x] When i said a number higher than the secret it said go higher.
   - inside the Developer Debug Info:
-      - [ ] the score says -5 instead of -10 for 2 failed attempts
-      - [ ] the History doesn't show the first attempt
+      - [x] the score says -5 instead of -10 for 2 failed attempts
+      - [ ] after the first guess, attempts left, attempts, score, and history all stay the same — nothing updates until the second guess (debug expander and info message render before submit logic runs, so all values are one rerun behind)
+      - [ ] invalid inputs like letters are added to history as past guesses
       - [ ] attempts are accurate inside of the developer debug info but not on the title where it says "Guess a number between 1 and 100. Attempts left: 5" attempts left is always 5.
   - [ ] allows negative numbers to be added as a guess (should only be between the range)
   - [x] new game button does not work
