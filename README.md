@@ -29,6 +29,13 @@ It wrote the code, ran away, and now the game is unplayable.
 - [ ] Detail which bugs you found.
 - [ ] Explain what fixes you applied.
 
+## ✨ Stretch Features Added
+
+### Leaderboard
+- Top scores are saved to a local `leaderboard.json` file after each game
+- Displays the top 5 scores with player name, difficulty, attempts used, and score
+- Persists across sessions so scores accumulate over time
+
 ## 📸 Demo
 
 - ![Winning Game Screenshot](images/winning_game.png)

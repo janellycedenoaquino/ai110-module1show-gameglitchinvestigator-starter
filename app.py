@@ -1,6 +1,6 @@
 import random
 import streamlit as st
-from logic_utils import check_guess, get_range_for_difficulty, parse_guess, update_score  # FIX: Refactored logic into logic_utils.py using ClaudeAI
+from logic_utils import check_guess, get_range_for_difficulty, parse_guess, update_score, load_leaderboard, save_to_leaderboard  # FIX: Refactored logic into logic_utils.py using ClaudeAI
 
 st.set_page_config(page_title="Glitchy Guesser", page_icon="🎮")
 
@@ -26,6 +26,18 @@ low, high = get_range_for_difficulty(difficulty)
 
 st.sidebar.caption(f"Range: {low} to {high}")
 st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
+
+st.sidebar.divider()
+st.sidebar.subheader("🏆 Leaderboard")
+leaderboard = load_leaderboard()
+if leaderboard:
+    for i, entry in enumerate(leaderboard, start=1):
+        st.sidebar.caption(
+            f"{i}. {entry['name']} — {entry['score']} pts "
+            f"({entry['difficulty']}, {entry['attempts']} attempts)"
+        )
+else:
+    st.sidebar.caption("No scores yet. Win a game to get on the board!")
 if "difficulty" not in st.session_state:
     st.session_state.difficulty = difficulty
 
@@ -36,6 +48,7 @@ if st.session_state.difficulty != difficulty:
     st.session_state.score = 0
     st.session_state.status = "playing"
     st.session_state.history = []
+    st.session_state.leaderboard_saved = False
 
 if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
@@ -51,6 +64,9 @@ if "status" not in st.session_state:
 
 if "history" not in st.session_state:
     st.session_state.history = []
+
+if "leaderboard_saved" not in st.session_state:
+    st.session_state.leaderboard_saved = False
 
 st.subheader("Make a guess")
 
@@ -77,12 +93,36 @@ if new_game:
     st.session_state.score = 0
     st.session_state.status = "playing"
     st.session_state.history = []
+    st.session_state.leaderboard_saved = False
     st.success("New game started.")
     st.rerun()
 
 if st.session_state.status != "playing":
     if st.session_state.status == "won":
-        st.success("You already won. Start a new game to play again.")
+        st.success(
+            f"You won! The secret was {st.session_state.secret}. "
+            f"Final score: {st.session_state.score}"
+        )
+        if not st.session_state.leaderboard_saved:
+            player_name = st.text_input("Enter your name for the leaderboard:", key="player_name")
+            if st.button("Save Score"):
+                if player_name.strip():
+                    saved = save_to_leaderboard(
+                        name=player_name.strip(),
+                        difficulty=difficulty,
+                        attempts=st.session_state.attempts,
+                        score=st.session_state.score,
+                    )
+                    if saved:
+                        st.session_state.leaderboard_saved = True
+                        st.rerun()
+                    else:
+                        st.warning(
+                            f"'{player_name.strip()}' already has a higher score on the leaderboard. "
+                            "Play again to beat it!"
+                        )
+                else:
+                    st.error("Please enter your name before saving.")
     else:
         st.error("Game over. Start a new game to try again.")
     st.stop()
@@ -110,10 +150,7 @@ if submit:
         if outcome == "Win":
             st.balloons()
             st.session_state.status = "won"
-            st.success(
-                f"You won! The secret was {st.session_state.secret}. "
-                f"Final score: {st.session_state.score}"
-            )
+            st.rerun()
         else:
             if st.session_state.attempts >= attempt_limit:
                 st.session_state.status = "lost"

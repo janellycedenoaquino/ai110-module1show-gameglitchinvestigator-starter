@@ -1,3 +1,41 @@
+import json
+import os
+
+LEADERBOARD_FILE = os.path.join(os.path.dirname(__file__), "leaderboard.json")
+
+
+def load_leaderboard():
+    """Load leaderboard from disk. Returns a list of entry dicts."""
+    if not os.path.exists(LEADERBOARD_FILE):
+        return []
+    try:
+        with open(LEADERBOARD_FILE, "r") as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+
+def save_to_leaderboard(name: str, difficulty: str, attempts: int, score: int):
+    """
+    Save score for a player. Each name is unique on the leaderboard.
+    Only updates if the new score is higher than the existing one.
+    Keeps only the top 5 by score.
+    Returns True if the score was saved/updated, False if it was not (existing score was higher).
+    """
+    entries = load_leaderboard()
+    existing = next((e for e in entries if e["name"].lower() == name.lower()), None)
+    if existing:
+        if score <= existing["score"]:
+            return False
+        entries.remove(existing)
+    entries.append({"name": name, "difficulty": difficulty, "attempts": attempts, "score": score})
+    entries.sort(key=lambda e: e["score"], reverse=True)
+    entries = entries[:5]
+    with open(LEADERBOARD_FILE, "w") as f:
+        json.dump(entries, f)
+    return True
+
+
 def get_range_for_difficulty(difficulty: str):
     """Return (low, high) inclusive range for a given difficulty."""
     if difficulty == "Easy":
@@ -54,7 +92,7 @@ def check_guess(guess, secret):
 def update_score(current_score: int, outcome: str, attempt_number: int):
     """Update score based on outcome and attempt number."""
     if outcome == "Win":
-        points = 100 - 10 * attempt_number
+        points = 100 - 10 * (attempt_number - 1)
         if points < 10:
             points = 10
         return current_score + points
