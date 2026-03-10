@@ -1,25 +1,6 @@
 import random
 import streamlit as st
-from logic_utils import check_guess, get_range_for_difficulty  # FIX: Refactored logic into logic_utils.py using ClaudeAI
-
-
-def parse_guess(raw: str):
-    if raw is None:
-        return False, None, "Enter a guess."
-
-    if raw == "":
-        return False, None, "Enter a guess."
-
-    try:
-        if "." in raw:
-            value = int(float(raw))
-        else:
-            value = int(raw)
-    except Exception:
-        return False, None, "That is not a number."
-
-    # FIXME: No range validation; negative numbers and out-of-bounds guesses are accepted
-    return True, value, None
+from logic_utils import check_guess, get_range_for_difficulty, parse_guess  # FIX: Refactored logic into logic_utils.py using ClaudeAI
 
 
 
